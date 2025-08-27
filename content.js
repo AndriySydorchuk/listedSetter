@@ -23,6 +23,18 @@ window.addEventListener('load', () => {
         editsBtns.forEach(editBtn => {
             editBtn.addEventListener('click', (e) => {
                 console.log(e.target);
+
+                setTimeout(() => {
+                    const addSpecificSpan = Array.from(document.querySelectorAll('button span')).find(span => span.textContent.trim() === 'Add custom specific');
+    
+                    const addSpecificBtn = addSpecificSpan?.closest('button');
+
+                    addSpecificBtn.addEventListener('click', (e) => {
+                        console.log(e.target);
+                    });
+                }, 3000);
+
+                
             });
         });
     }, 3000);
