@@ -23,11 +23,28 @@ window.addEventListener('load', () => {
                             
                             listedTextInput.value = 'LISTED';
                             listedTextInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                            const allSpans = Array.from(document.querySelectorAll('span'));
+
+                            const matchingSpans = allSpans.filter(span => {
+                                const text = span.textContent.trim();
+                                return text.endsWith('Value(s)');
+                            });
+
+                            const listedSpan = matchingSpans[matchingSpans.length - 1];
+                            const parentDiv = listedSpan.closest('div');
+
+                            listedSpan.click();
+
+                            setTimeout(() => {
+                                const listedValueInput = parentDiv.querySelector('input');
+                                listedValueInput.value = listed;
+                                listedValueInput.dispatchEvent(new Event('input', {bubbles: true}));
+                            }, 500);
+                        
                         }, 500);
                     });
                 }, 3000);
-
-                
             });
         });
     }, 3000);
