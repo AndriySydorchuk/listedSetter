@@ -1,52 +1,47 @@
 window.addEventListener('load', () => {
     chrome.storage.local.get('listed', (result) => {
-    const listed = result.listed;
+        const listed = result.listed;
 
-    setTimeout(() => {
-        const editsBtns = Array.from(document.querySelectorAll('button')).filter(btn => {
-            return Array.from(btn.querySelectorAll('span')).some(span => span.textContent.trim() === 'Edit');
-        });
+        function setupAddSpecificButton(addSpecificBtn) {
+            if(addSpecificBtn.dataset.listenerAdded) return;
 
-        editsBtns.forEach(editBtn => {
-            editBtn.addEventListener('click', (e) => {
-
+            addSpecificBtn.dataset.listenerAdded = 'true';
+            addSpecificBtn.addEventListener('click', () => {
                 setTimeout(() => {
-                    const addSpecificSpan = Array.from(document.querySelectorAll('button span')).find(span => span.textContent.trim() === 'Add custom specific');
-    
-                    const addSpecificBtn = addSpecificSpan?.closest('button');
+                    const nameInputs = document.querySelectorAll('input[placeholder="Name"]');
+                    const listedTextInput = nameInputs[nameInputs.length - 1];
+                    
+                    listedTextInput.value = 'LISTED';
+                    listedTextInput.dispatchEvent(new Event('input', { bubbles: true }));
 
-                    addSpecificBtn.addEventListener('click', (e) => {
-                        
-                        setTimeout(() => {
-                            const nameInputs = document.querySelectorAll('input[placeholder="Name"]');
-                            const listedTextInput = nameInputs[nameInputs.length - 1];
-                            
-                            listedTextInput.value = 'LISTED';
-                            listedTextInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    const allSpans = Array.from(document.querySelectorAll('span'));
+                    const matchingSpans = allSpans.filter(span => span.textContent.trim().endsWith('Value(s)'));
 
-                            const allSpans = Array.from(document.querySelectorAll('span'));
+                    const listedSpan = matchingSpans[matchingSpans.length - 1];
+                    const parentDiv = listedSpan.closest('div');
 
-                            const matchingSpans = allSpans.filter(span => {
-                                const text = span.textContent.trim();
-                                return text.endsWith('Value(s)');
-                            });
+                    listedSpan.click();
 
-                            const listedSpan = matchingSpans[matchingSpans.length - 1];
-                            const parentDiv = listedSpan.closest('div');
-
-                            listedSpan.click();
-
-                            setTimeout(() => {
-                                const listedValueInput = parentDiv.querySelector('input');
-                                listedValueInput.value = listed;
-                                listedValueInput.dispatchEvent(new Event('input', {bubbles: true}));
-                            }, 500);
-                        
-                        }, 500);
-                    });
-                }, 3000);
+                    setTimeout(() => {
+                        const listedValueInput = parentDiv.querySelector('input');
+                        listedValueInput.value = listed;
+                        listedValueInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }, 300);
+                }, 300);
             });
+        }
+
+        const observer = new MutationObserver(() => {
+            const addSpecificSpan = Array.from(document.querySelectorAll('button span'))
+                .find(span => span.textContent.trim() === 'Add custom specific');
+            
+            const addSpecificBtn = addSpecificSpan?.closest('button');
+            
+            if (addSpecificBtn) {
+                setupAddSpecificButton(addSpecificBtn);
+            }
         });
-    }, 3000);
-  });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
 });
