@@ -3,26 +3,6 @@ window.addEventListener('load', () => {
         const brand = result.brand;
         const listed = result.listed;
 
-        function setupBrand() {
-            const matchingDiv = [...document.querySelectorAll('div')].find(div => div.textContent.trim().endsWith('Brand'));
-            
-            if(matchingDiv) {
-                console.log(`matching div ${matchingDiv}`);
-            } else {
-                console.log('matching div not found');
-            }
-    
-            const brandInput = matchingDiv.querySelector('input');
-    
-            if(brandInput) {
-                console.log(`brand input found and setted to ${brand}`);
-                brandInput.value = brand;
-                brandInput.dispatchEvent(new Event('input', {bubbles: true}));
-            } else {
-                console.log('brand input not found');
-            }
-        }    
-
         function setupAddSpecificButton(addSpecificBtn) {
             if(addSpecificBtn.dataset.listenerAdded) return;
 
