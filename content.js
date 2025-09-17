@@ -1,6 +1,27 @@
 window.addEventListener('load', () => {
-    chrome.storage.local.get('listed', (result) => {
+    chrome.storage.local.get(['brand', 'listed'], (result) => {
+        const brand = result.brand;
         const listed = result.listed;
+
+        function setupBrand() {
+            const matchingDiv = [...document.querySelectorAll('div')].find(div => div.textContent.trim().endsWith('Brand'));
+            
+            if(matchingDiv) {
+                console.log(`matching div ${matchingDiv}`);
+            } else {
+                console.log('matching div not found');
+            }
+    
+            const brandInput = matchingDiv.querySelector('input');
+    
+            if(brandInput) {
+                console.log(`brand input found and setted to ${brand}`);
+                brandInput.value = brand;
+                brandInput.dispatchEvent(new Event('input', {bubbles: true}));
+            } else {
+                console.log('brand input not found');
+            }
+        }    
 
         function setupAddSpecificButton(addSpecificBtn) {
             if(addSpecificBtn.dataset.listenerAdded) return;
@@ -32,6 +53,16 @@ window.addEventListener('load', () => {
         }
 
         const observer = new MutationObserver(() => {
+            const matchingDiv = [...document.querySelectorAll('div')].find(div => div.textContent.trim().endsWith('Brand'));
+            
+            if(matchingDiv) {
+                const brandInput = matchingDiv.querySelector('input');
+                if(brandInput) {
+                    brandInput.value = brand;
+                    brandInput.dispatchEvent(new Event('input', {bubbles: true}));
+                }
+            }
+    
             const addSpecificSpan = Array.from(document.querySelectorAll('button span'))
                 .find(span => span.textContent.trim() === 'Add custom specific');
             
